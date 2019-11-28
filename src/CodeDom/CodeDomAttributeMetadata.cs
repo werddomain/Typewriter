@@ -19,7 +19,16 @@ namespace Typewriter.Metadata.CodeDom
             if (string.IsNullOrEmpty(this.value))
                 this.value = null;
         }
-
+        IEnumerable<KeyValuePair<string, string>> _attributes;
+        public IEnumerable<KeyValuePair<string, string>> AttributeArguments
+        {
+            get
+            {
+                if (_attributes == null)
+                    _attributes = codeAttribute.Children.OfType<CodeAttributeArgument>().Select(o => new KeyValuePair<string, string>(o.Name, o.Value));
+                return _attributes;
+            }
+        }
         public string Name => codeAttribute.Name;
         public string FullName => codeAttribute.FullName;
         public string Value => value;

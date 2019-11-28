@@ -110,7 +110,7 @@ namespace Typewriter.Generation.Controllers
             });
         }
 
-        public void OnCsFileDeleted(string[] paths)
+        public async void OnCsFileDeleted(string[] paths)
         {
             if (ExtensionPackage.Instance.TrackSourceFiles == false)
             {
@@ -119,7 +119,7 @@ namespace Typewriter.Generation.Controllers
             }
 
             // Delay to wait for Roslyn to refresh the current Workspace after a change.
-            Task.Delay(1000).ContinueWith(task =>
+            await Task.Delay(1000).ContinueWith(task =>
             {
                 Enqueue(GenerationType.Delete, paths, (path, template) => template.DeleteFile(path));
             });
@@ -129,7 +129,7 @@ namespace Typewriter.Generation.Controllers
             Enqueue(type, paths, (s, t, i) => s, action);
         }
 
-        public void OnCsFileRenamed(string[] newPaths, string[] oldPaths)
+        public async void OnCsFileRenamed(string[] newPaths, string[] oldPaths)
         {
             if (ExtensionPackage.Instance.TrackSourceFiles == false)
             {
@@ -138,7 +138,7 @@ namespace Typewriter.Generation.Controllers
             }
 
             // Delay to wait for Roslyn to refresh the current Workspace after a change.
-            Task.Delay(1000).ContinueWith(task =>
+            await Task.Delay(1000).ContinueWith(task =>
             {
                 Enqueue(GenerationType.Rename, newPaths, (path, template, fileIndex) => new { OldPath = oldPaths[fileIndex], NewPath = path, NewFileMeta = _metadataProvider.GetFile(path, template.Settings, null) },
                     (item, template) =>
